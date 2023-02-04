@@ -20,6 +20,7 @@ public class Main : MonoBehaviour
     private long _ticks_from_start;
     private long _last_ticks;
     private bool _pause;
+    private int _speed;
 
     public void StartPause()
     {
@@ -28,7 +29,33 @@ public class Main : MonoBehaviour
 
     public void EndPause()
     {
+        _last_ticks = DateTime.Now.Ticks;
         _pause = false;
+    }
+
+    public bool isPaused()
+    {
+        return _pause;
+    }
+
+    public void setSpeed(int x)
+    {
+        _speed = x;
+    }
+
+    public long TimeNow()
+    {
+        return _ticks_from_start;
+    }
+
+    public void AddMushrooms(int k)
+    {
+        _mushrooms += k;
+    }
+
+    public void AddMushroomsMax(int k)
+    {
+        _mushrooms_max += k;
     }
 
     // Start is called before the first frame update
@@ -40,12 +67,16 @@ public class Main : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (!_pause) UpdateTicks();
+        if (!_pause)
+        {
+            UpdateTicks();
+        }
     }
 
     private void UpdateTicks()
     {
         var now = DateTime.Now.Ticks;
         _last_ticks = now;
+        _ticks_from_start = _ticks_from_start + (now - _last_ticks) * _speed;
     }
 }
