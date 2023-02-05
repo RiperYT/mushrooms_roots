@@ -5,28 +5,41 @@ using UnityEngine;
 
 public class Main : MonoBehaviour
 {
-    private float _water;
-    private int _water_produce;
-    private float _water_produce_x;
-    private int _water_costs;
+    public float _water;
+    public int _water_produce;
+    public float _water_produce_x;
+    public int _water_costs;
 
-    private float _food;
-    private int _food_produce;
-    private float _food_produce_x;
-    private int _food_costs;
+    public float _food;
+    public int _food_produce;
+    public float _food_produce_x;
+    public int _food_costs;
 
-    private float _energy;
-    private int _energy_produce;
-    private float _energy_produce_x;
-    private int _energy_costs;
+    public float _energy;
+    public int _energy_produce;
+    public float _energy_produce_x;
+    public int _energy_costs;
 
-    private int _mushrooms;
-    private int _mushrooms_max;
+    public int _mushrooms;
+    public int _mushrooms_max;
 
-    private long _ticks_from_start;
-    private long _last_ticks;
-    private bool _pause;
-    private int _speed;
+    public long _ticks_from_update;
+    public long _ticks_from_start;
+    public long _last_ticks;
+    public bool _pause;
+    public int _speed;
+
+    public int timeS;
+
+    public bool isSummer;
+    public int foodCost;
+    public int waterCost;
+    public int energyCost;
+
+    public bool _lastIsSummer;
+    public int _dopFoodCost;
+    public int _dopWaterCost;
+    public int _dopEnergyCost;
 
     public void StartPause()
     {
@@ -90,7 +103,7 @@ public class Main : MonoBehaviour
 
     public int GetWaterCosts()
     {
-        return _water_costs;
+        return _water_costs - waterCost * _mushrooms;
     }
 
     public int GetWaterProduce()
@@ -101,6 +114,11 @@ public class Main : MonoBehaviour
     public void MultiplyWaterX(float k)
     {
         _water_produce_x *= k;
+    }
+
+    public void AddWater(int k)
+    {
+        _water += k;
     }
 
     public void AddWaterCosts(int k)
@@ -125,7 +143,7 @@ public class Main : MonoBehaviour
 
     public int GetFoodCosts()
     {
-        return _food_costs;
+        return _food_costs - foodCost * _mushrooms;
     }
 
     public int GetFoodProduce()
@@ -136,6 +154,11 @@ public class Main : MonoBehaviour
     public void MultiplyFoodX(float k)
     {
         _food_produce_x *= k;
+    }
+
+    public void AddFood(int k)
+    {
+        _food += k;
     }
 
     public void AddFoodCosts(int k)
@@ -160,7 +183,7 @@ public class Main : MonoBehaviour
 
     public int GetEnergyCosts()
     {
-        return _energy_costs;
+        return _energy_costs - energyCost * _mushrooms;
     }
 
     public int GetEnergyProduce()
@@ -173,6 +196,11 @@ public class Main : MonoBehaviour
         _energy_produce_x *= k;
     }
 
+    public void AddEnergy(int k)
+    {
+        _energy += k;
+    }
+
     public void AddEnergyCosts(int k)
     {
         _energy_costs += k;
@@ -182,11 +210,23 @@ public class Main : MonoBehaviour
     {
         _energy_produce += k;
     }
-    
+
+    public int GetTimeS()
+    {
+        return timeS;
+    }
+
     // Start is called before the first frame update
     void Start()
     {
+        _water_produce_x = 1;
+        _food_produce_x = 1;
+        _energy_produce_x = 1;
+        _speed = 1;
         _pause = false;
+        _ticks_from_start = 0;
+        _ticks_from_update = 0;
+        _last_ticks = DateTime.Now.Ticks;
     }
 
     // Update is called once per frame
@@ -195,13 +235,41 @@ public class Main : MonoBehaviour
         if (!_pause)
         {
             UpdateTicks();
+            Mathemetic();
+            CheckEnd();
+        }
+    }
+
+    private void ChangeWeather()
+    {
+        if (_lastIsSummer != isSummer)
+        {
+
         }
     }
 
     private void UpdateTicks()
     {
         var now = DateTime.Now.Ticks;
-        _last_ticks = now;
         _ticks_from_start = _ticks_from_start + (now - _last_ticks) * _speed;
+        _ticks_from_update = _ticks_from_update + (now - _last_ticks) * _speed;
+        _last_ticks = now;
+    }
+
+    private void Mathemetic()
+    {
+        if (_ticks_from_update >= timeS * 10000000)
+        {
+            _water = _water + _water_produce * _water_produce_x - _water_costs + waterCost * _mushrooms;
+            _food = _food + _food_produce * _food_produce_x - _food_costs + foodCost * _mushrooms;
+            _energy = _energy + _energy_produce * _energy_produce_x - _energy_costs + energyCost * _mushrooms;
+            _ticks_from_update = 0;
+        }
+    }
+
+    private void CheckEnd()
+    {
+        if (_energy < 0)
+            Debug.Log("End");
     }
 }

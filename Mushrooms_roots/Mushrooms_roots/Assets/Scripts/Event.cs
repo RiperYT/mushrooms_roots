@@ -4,22 +4,27 @@ using UnityEngine;
 
 public class Event : MonoBehaviour
 {
-    public int GetWoterCost()
+    public string name;
+    public int waterCost, foodCost, EnergyCost;
+    public string Name()
     {
-        //ToDo
-        return 0;
+        return name;
+    }
+    public int GetWaterCost()
+    {
+        return waterCost;
     }
 
     public int GetFoodCost()
     {
         //ToDo
-        return 0;
+        return foodCost;
     }
 
     public int GetEnergyCost()
     {
         //ToDo
-        return 0;
+        return EnergyCost;
     }
 
     // Start is called before the first frame update

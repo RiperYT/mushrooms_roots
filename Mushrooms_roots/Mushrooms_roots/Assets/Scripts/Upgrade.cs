@@ -4,57 +4,82 @@ using UnityEngine;
 
 public class Upgrade : MonoBehaviour
 {
+    
+    private bool _isActive;
+    private Main _main;
+    private Upgrade upgrade;
+
+    public GameObject before;
+    public int waterNeed, foodNeed, energyNeed;
+    public float waterX, foodX, energyX;
+
     public float GetFoodX()
     {
-        //ToDo
-        return 1f;
+        return foodX;
     }
 
     public float GetWaterX()
     {
-        //ToDo
-        return 1f;
+        return waterX;
     }
 
     public float GetEnergyX()
     {
-        //ToDo
-        return 1f;
+        return energyX;
     }
 
     public int GetFoodNeed()
     {
-        //ToDo
-        return 1;
+        return foodNeed;
     }
 
     public int GetWaterNeed()
     {
-        //ToDo
-        return 1;
+        return waterNeed;
     }
 
     public int GetEnergyNeed()
     {
-        //ToDo
-        return 1;
+        return energyNeed;
     }
 
     public void Activate()
     {
-        //ToDo
+        if (_main.GetEnergy() >= energyNeed && _main.GetWater() >= waterNeed && _main.GetFood() >= foodNeed)
+        {
+            _isActive = true;
+            _main.MultiplyEnergyX(energyX);
+            _main.MultiplyFoodX(foodX);
+            _main.MultiplyWaterX(waterX);
+        }
     }
 
     public bool IsActive()
     {
-        //ToDo
-        return true;
+        return _isActive;
+    }
+
+    public bool CanBeOpened()
+    {
+        if (before == null)
+        {
+            return true;
+        }
+        else
+        {
+            return upgrade.IsActive();
+        }
     }
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        _main = Camera.main.GetComponent<Main>();
+
+        if (before == null)
+        {
+            upgrade = before.GetComponent<Upgrade>();
+        }
     }
 
     // Update is called once per frame
