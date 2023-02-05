@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class CameraMain : MonoBehaviour
 {
-    public int minX, minZ, maxX, maxZ;
+    public float minX, minZ, maxX, maxZ;
 
     public GameObject gameInterface;
 
@@ -45,17 +45,17 @@ public class CameraMain : MonoBehaviour
         transform.Translate(0, 0, Input.GetAxis("Vertical") * speed);
         transform.position = new Vector3(transform.position.x, pos.y, transform.position.z);
 
-        if (transform.position.x > maxX || transform.position.x < minX)
-            transform.position = new Vector3(pos.x, transform.position.y, transform.position.z);
-        if (transform.position.z > maxZ || transform.position.z < minZ)
-            transform.position = new Vector3(transform.position.x, transform.position.y, pos.z);
-
         RaycastHit hit;
         if (Physics.Raycast(ray, out hit))
         {
             if (Input.GetKey("q")) transform.RotateAround(hit.point, Vector3.up, 1);
             if (Input.GetKey("e")) transform.RotateAround(hit.point, Vector3.down, 1);
         }
+
+        if (transform.position.x > maxX || transform.position.x < minX)
+            transform.position = new Vector3(pos.x, transform.position.y, transform.position.z);
+        if (transform.position.z > maxZ || transform.position.z < minZ)
+            transform.position = new Vector3(transform.position.x, transform.position.y, pos.z);
     }
 
     private void RayClick()

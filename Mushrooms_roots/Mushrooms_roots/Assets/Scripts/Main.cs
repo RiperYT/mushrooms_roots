@@ -235,6 +235,14 @@ public class Main : MonoBehaviour
         _last_ticks = DateTime.Now.Ticks;
         listSector = new GameObject[sizeZ,sizeX];
         CreateWorld();
+
+        Camera.main.transform.position = new Vector3((sizeX - 1) * 6.4f / 2, 8.1f, (-sizeZ - 1) * 6.4f/ 2);
+        var camera = Camera.main.GetComponent<CameraMain>();
+        camera.minX = -5;
+        camera.maxZ = 5;
+        camera.maxX = sizeX * 6.4f + 1.8f;
+        camera.minZ = -sizeZ * 6.4f - 1.8f;
+
     }
 
     // Update is called once per frame
@@ -314,7 +322,7 @@ public class Main : MonoBehaviour
                     }
                     else
                     {
-                        listSector[i, j] = Instantiate(blue[random.Next(0, blue.Count)], new Vector3(6.4f * j, 0, -6.4f * i), new Quaternion(0, 0, 0, 0)) as GameObject;
+                        listSector[i, j] = Instantiate(blue[random.Next(0, blue.Count)], new Vector3(6.4f * j, 0, -6.4f * i), Quaternion.identity) as GameObject;
                         var sec = listSector[i, j].GetComponent<Sector>();
                         sec._water = random.Next(3, 5);
                         sec._food = random.Next(1, 3);
@@ -334,7 +342,8 @@ public class Main : MonoBehaviour
 
                         if (i + 1 < sizeZ)
                         {
-                            listSector[i + 1, j] = Instantiate(blue[random.Next(0, blue.Count)], new Vector3(6.4f * j, 0, -6.4f * (i + 1)), new Quaternion(0, -90, 0, 0)) as GameObject;
+                            listSector[i + 1, j] = Instantiate(blue[random.Next(0, blue.Count)], new Vector3(6.4f * j, 0, -6.4f * (i + 1)), Quaternion.identity) as GameObject;
+                            listSector[i + 1, j].transform.RotateAround(listSector[i + 1, j].transform.position, Vector3.up, -90); ;
                             var sec1 = listSector[i + 1, j].GetComponent<Sector>();
                             sec1._water = random.Next(3, 5);
                             sec1._food = random.Next(1, 3);
@@ -354,7 +363,8 @@ public class Main : MonoBehaviour
                         }
                         if (j + 1 < sizeX)
                         {
-                            listSector[i, j + 1] = Instantiate(blue[random.Next(0, blue.Count)], new Vector3(6.4f * (j + 1), 0, -6.4f * i), new Quaternion(0, 90, 0, 0)) as GameObject;
+                            listSector[i, j + 1] = Instantiate(blue[random.Next(0, blue.Count)], new Vector3(6.4f * (j + 1), 0, -6.4f * i), Quaternion.identity) as GameObject;
+                            listSector[i, j + 1].transform.RotateAround(listSector[i, j + 1].transform.position, Vector3.up, 90);
                             var sec1 = listSector[i, j + 1].GetComponent<Sector>();
                             sec1._water = random.Next(3, 5);
                             sec1._food = random.Next(1, 3);
@@ -374,7 +384,8 @@ public class Main : MonoBehaviour
                         }
                         if (j + 1 < sizeX && i + 1 < sizeZ)
                         {
-                            listSector[i + 1, j + 1] = Instantiate(blue[random.Next(0, blue.Count)], new Vector3(6.4f * (j + 1), 0, -6.4f * (i + 1)), new Quaternion(0, 180, 0, 0)) as GameObject;
+                            listSector[i + 1, j + 1] = Instantiate(blue[random.Next(0, blue.Count)], new Vector3(6.4f * (j + 1), 0, -6.4f * (i + 1)), Quaternion.identity) as GameObject;
+                            listSector[i + 1, j + 1].transform.RotateAround(listSector[i + 1, j + 1].transform.position, Vector3.up, -180); ;
                             var sec1 = listSector[i + 1, j + 1].GetComponent<Sector>();
                             sec1._water = random.Next(3, 5);
                             sec1._food = random.Next(1, 3);
