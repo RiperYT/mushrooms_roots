@@ -292,7 +292,6 @@ public class Main : MonoBehaviour
                 {
                     var random = new System.Random();
                     var r = random.Next(1, 3);
-                    Debug.Log(r);
                     if (r == 1)
                     {
                         listSector[i, j] = Instantiate(green[random.Next(0, green.Count)], new Vector3(6.4f * j, 0, 6.4f * i), new Quaternion(0,0,0,0)) as GameObject;
@@ -406,5 +405,20 @@ public class Main : MonoBehaviour
         listSector[centalZ - 1, centalX].GetComponent<Sector>().SetNear(true);
         listSector[centalZ, centalX - 1].GetComponent<Sector>().SetNear(true);
         listSector[centalZ, centalX - 1].GetComponent<Sector>().SetNear(true);
+    }
+    private bool isNearWater(int i, int j)
+    {
+        var p = true;
+
+        if (listSector[i - 1, j - 1] != null && i > 0 && j > 0) if (listSector[i - 1, j - 1].GetComponent<Sector>().GetWater() > 2) p = false;
+        if (listSector[i - 1, j] != null && i > 0) if (listSector[i - 1, j].GetComponent<Sector>().GetWater() > 2) p = false;
+        if (listSector[i - 1, j + 1] != null && i > 0 && j < sizeX - 1) if (listSector[i + 1, j].GetComponent<Sector>().GetWater() > 2) p = false;
+        if (listSector[i, j + 1] != null && j < sizeX - 1) if (listSector[i - 1, j - 1].GetComponent<Sector>().GetWater() > 2) p = false;
+        if (listSector[i + 1, j + 1] != null && i < sizeZ - 1 && j < sizeX - 1) if (listSector[i - 1, j - 1].GetComponent<Sector>().GetWater() > 2) p = false;
+        if (listSector[i + 1, j] != null && i < sizeZ - 1) if (listSector[i - 1, j - 1].GetComponent<Sector>().GetWater() > 2) p = false;
+        if (listSector[i + 1, j - 1] != null && i < sizeZ - 1 && j > 0) if (listSector[i - 1, j - 1].GetComponent<Sector>().GetWater() > 2) p = false;
+        if (listSector[i, j - 1] != null && j > 0) if (listSector[i - 1, j - 1].GetComponent<Sector>().GetWater() > 2) p = false;
+
+        return p;
     }
 }
