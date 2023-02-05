@@ -42,12 +42,11 @@ public class EventMaker : MonoBehaviour
             //_main.AddWaterCosts(-events[number].GetWaterCost());
             //_main.AddFoodCosts(-events[number].GetFoodCost());
 
+            number++;
+
             _main.energyCost = events[number].GetEnergyCost();
             _main.waterCost = events[number].GetWaterCost();
             _main.foodCost = events[number].GetFoodCost();
-
-            number++;
-
             //_main.AddEnergyCosts(events[number].GetEnergyCost());
             //_main.AddWaterCosts(events[number].GetWaterCost());
             //_main.AddFoodCosts(events[number].GetFoodCost());
