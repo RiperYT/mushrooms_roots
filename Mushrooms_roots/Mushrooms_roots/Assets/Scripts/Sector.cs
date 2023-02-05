@@ -8,11 +8,17 @@ public class Sector : MonoBehaviour
     public int _food;
     public int _mushrooms_present;
     public int _mushrooms_max;
-    public int _energy_need;
+    public int _energy_for_colonise;
 
     public int _energy_start;
     public int _energy_upgrade;
 
+    public int _time_start;
+    public int _time_upgrade;
+
+    private int _isUpgrading;
+    private long _start_of_upgrading;
+    private float _percent_of_upgrading;
 
     private bool _isChoosed;
     public bool _isColonised;
@@ -20,9 +26,52 @@ public class Sector : MonoBehaviour
 
     private long _time_of_colonisation;
     private long _start_of_colonisation;
-    private float _interest_of_colonisation;
+    private float _percent_of_colonisation;
 
     private Main _main;
+
+    public int GetWater() 
+    { 
+        return _water;
+    }
+
+    public int GetFood()
+    {
+        return _food;
+    }
+
+    public int GetMushroomsPresent()
+    {
+        return _mushrooms_present;
+    }
+
+    public int GetMushroomsMax()
+    {
+        return _mushrooms_max;
+    }
+
+    public int GetEnergyForColonise()
+    {
+        return _energy_for_colonise;
+    }
+
+    public int GetTimeUpgrade()
+    {
+        //ToDo
+        return _time_upgrade;
+    }
+
+    public long GetTimeToEndUpgrade()
+    {
+        //ToDo
+        return 1;
+    }
+
+    public bool IsUpgrading()
+    {
+        //ToDo
+        return false;
+    }
 
     public void Choose()
     {
@@ -32,6 +81,7 @@ public class Sector : MonoBehaviour
             transform.Translate(0, 0.5f, 0);
         }
     }
+
     public void EndChoose()
     {
         if (_isChoosed)
@@ -42,7 +92,7 @@ public class Sector : MonoBehaviour
 
     }
 
-    public void StartColonosing()
+    public void StartColonisatining()
     {
         if (!_isColonised)
         {
@@ -52,7 +102,7 @@ public class Sector : MonoBehaviour
     }
     public float GetInterest()
     {
-        return _interest_of_colonisation;
+        return _percent_of_colonisation;
     }
 
     // Start is called before the first frame update
@@ -71,8 +121,8 @@ public class Sector : MonoBehaviour
 
     private void Colonising()
     {
-        _interest_of_colonisation = (_main.TimeNow() - _start_of_colonisation) / _time_of_colonisation * 100;
-        if (_interest_of_colonisation >= 100)
+        _percent_of_colonisation = (_main.TimeNow() - _start_of_colonisation) / _time_of_colonisation * 100;
+        if (_percent_of_colonisation >= 100)
         {
             _isColonised = true;
             _isColonising = false;

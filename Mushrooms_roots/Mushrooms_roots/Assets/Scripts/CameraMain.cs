@@ -18,7 +18,7 @@ public class CameraMain : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (!_main.isPaused())
+        if (!_main.IsPaused())
         {
             MoveCamera();
             if (Input.GetMouseButtonDown(0))

@@ -5,15 +5,21 @@ using UnityEngine;
 
 public class Main : MonoBehaviour
 {
-    private int _water;
+    private float _water;
     private int _water_produce;
+    private float _water_produce_x;
     private int _water_costs;
-    private int _food;
+
+    private float _food;
     private int _food_produce;
+    private float _food_produce_x;
     private int _food_costs;
-    private int _energy;
+
+    private float _energy;
     private int _energy_produce;
+    private float _energy_produce_x;
     private int _energy_costs;
+
     private int _mushrooms;
     private int _mushrooms_max;
 
@@ -33,12 +39,12 @@ public class Main : MonoBehaviour
         _pause = false;
     }
 
-    public bool isPaused()
+    public bool IsPaused()
     {
         return _pause;
     }
 
-    public void setSpeed(int x)
+    public void SetSpeed(int x)
     {
         _speed = x;
     }
@@ -46,6 +52,20 @@ public class Main : MonoBehaviour
     public long TimeNow()
     {
         return _ticks_from_start;
+    }
+
+    public void SetVolumeSound(float k)
+    {
+        //ToDo
+    }
+
+    public int GetMushrooms()
+    {
+        return _mushrooms;
+    }
+    public int GetMushroomsMax()
+    {
+        return _mushrooms_max;
     }
 
     public void AddMushrooms(int k)
@@ -58,6 +78,111 @@ public class Main : MonoBehaviour
         _mushrooms_max += k;
     }
 
+    public float GetWater()
+    {
+        return _water;
+    }
+
+    public float GetWaterX()
+    {
+        return _water_produce_x;
+    }
+
+    public int GetWaterCosts()
+    {
+        return _water_costs;
+    }
+
+    public int GetWaterProduce()
+    {
+        return _water_produce;
+    }
+
+    public void MultiplyWaterX(float k)
+    {
+        _water_produce_x *= k;
+    }
+
+    public void AddWaterCosts(int k)
+    {
+        _water_costs += k;
+    }
+
+    public void AddWaterProduce(int k)
+    {
+        _water_produce += k;
+    }
+
+    public float GetFood()
+    {
+        return _food;
+    }
+
+    public float GetFoodX()
+    {
+        return _food_produce_x;
+    }
+
+    public int GetFoodCosts()
+    {
+        return _food_costs;
+    }
+
+    public int GetFoodProduce()
+    {
+        return _food_produce;
+    }
+
+    public void MultiplyFoodX(float k)
+    {
+        _food_produce_x *= k;
+    }
+
+    public void AddFoodCosts(int k)
+    {
+        _food_costs += k;
+    }
+
+    public void AddFoodProduce(int k)
+    {
+        _food_produce += k;
+    }
+
+    public float GetEnergy()
+    {
+        return _energy;
+    }
+
+    public float GetEnergyX()
+    {
+        return _energy_produce_x;
+    }
+
+    public int GetEnergyCosts()
+    {
+        return _energy_costs;
+    }
+
+    public int GetEnergyProduce()
+    {
+        return _energy_produce;
+    }
+
+    public void MultiplyEnergyX(float k)
+    {
+        _energy_produce_x *= k;
+    }
+
+    public void AddEnergyCosts(int k)
+    {
+        _energy_costs += k;
+    }
+
+    public void AddEnergyProduce(int k)
+    {
+        _energy_produce += k;
+    }
+    
     // Start is called before the first frame update
     void Start()
     {
