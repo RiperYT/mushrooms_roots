@@ -292,9 +292,9 @@ public class Main : MonoBehaviour
                 {
                     var random = new System.Random();
                     var r = random.Next(1, 3);
-                    if (r == 1)
+                    if (r == 1 || !isNearWater(i, j))
                     {
-                        listSector[i, j] = Instantiate(green[random.Next(0, green.Count)], new Vector3(6.4f * j, 0, 6.4f * i), new Quaternion(0,0,0,0)) as GameObject;
+                        listSector[i, j] = Instantiate(green[random.Next(0, green.Count)], new Vector3(6.4f * j, 0, -6.4f * i), new Quaternion(0,0,0,0)) as GameObject;
                         var sec = listSector[i, j].GetComponent<Sector>();
                         sec._water = random.Next(1, 3);
                         sec._food = random.Next(3, 5);
@@ -314,7 +314,7 @@ public class Main : MonoBehaviour
                     }
                     else
                     {
-                        listSector[i, j] = Instantiate(blue[random.Next(0, blue.Count)], new Vector3(6.4f * j, 0, 6.4f * i), new Quaternion(0, 0, 0, 0)) as GameObject;
+                        listSector[i, j] = Instantiate(blue[random.Next(0, blue.Count)], new Vector3(6.4f * j, 0, -6.4f * i), new Quaternion(0, 0, 0, 0)) as GameObject;
                         var sec = listSector[i, j].GetComponent<Sector>();
                         sec._water = random.Next(3, 5);
                         sec._food = random.Next(1, 3);
@@ -334,7 +334,7 @@ public class Main : MonoBehaviour
 
                         if (i + 1 < sizeZ)
                         {
-                            listSector[i + 1, j] = Instantiate(blue[random.Next(0, blue.Count)], new Vector3(6.4f * j, 0, 6.4f * (i + 1)), new Quaternion(0, -90, 0, 0)) as GameObject;
+                            listSector[i + 1, j] = Instantiate(blue[random.Next(0, blue.Count)], new Vector3(6.4f * j, 0, -6.4f * (i + 1)), new Quaternion(0, -90, 0, 0)) as GameObject;
                             var sec1 = listSector[i + 1, j].GetComponent<Sector>();
                             sec1._water = random.Next(3, 5);
                             sec1._food = random.Next(1, 3);
@@ -354,7 +354,7 @@ public class Main : MonoBehaviour
                         }
                         if (j + 1 < sizeX)
                         {
-                            listSector[i, j + 1] = Instantiate(blue[random.Next(0, blue.Count)], new Vector3(6.4f * (j + 1), 0, 6.4f * i), new Quaternion(0, 90, 0, 0)) as GameObject;
+                            listSector[i, j + 1] = Instantiate(blue[random.Next(0, blue.Count)], new Vector3(6.4f * (j + 1), 0, -6.4f * i), new Quaternion(0, 90, 0, 0)) as GameObject;
                             var sec1 = listSector[i, j + 1].GetComponent<Sector>();
                             sec1._water = random.Next(3, 5);
                             sec1._food = random.Next(1, 3);
@@ -374,7 +374,7 @@ public class Main : MonoBehaviour
                         }
                         if (j + 1 < sizeX && i + 1 < sizeZ)
                         {
-                            listSector[i + 1, j + 1] = Instantiate(blue[random.Next(0, blue.Count)], new Vector3(6.4f * (j + 1), 0, 6.4f * (i + 1)), new Quaternion(0, 180, 0, 0)) as GameObject;
+                            listSector[i + 1, j + 1] = Instantiate(blue[random.Next(0, blue.Count)], new Vector3(6.4f * (j + 1), 0, -6.4f * (i + 1)), new Quaternion(0, 180, 0, 0)) as GameObject;
                             var sec1 = listSector[i + 1, j + 1].GetComponent<Sector>();
                             sec1._water = random.Next(3, 5);
                             sec1._food = random.Next(1, 3);
@@ -410,14 +410,14 @@ public class Main : MonoBehaviour
     {
         var p = true;
 
-        if (listSector[i - 1, j - 1] != null && i > 0 && j > 0) if (listSector[i - 1, j - 1].GetComponent<Sector>().GetWater() > 2) p = false;
-        if (listSector[i - 1, j] != null && i > 0) if (listSector[i - 1, j].GetComponent<Sector>().GetWater() > 2) p = false;
-        if (listSector[i - 1, j + 1] != null && i > 0 && j < sizeX - 1) if (listSector[i + 1, j].GetComponent<Sector>().GetWater() > 2) p = false;
-        if (listSector[i, j + 1] != null && j < sizeX - 1) if (listSector[i - 1, j - 1].GetComponent<Sector>().GetWater() > 2) p = false;
-        if (listSector[i + 1, j + 1] != null && i < sizeZ - 1 && j < sizeX - 1) if (listSector[i - 1, j - 1].GetComponent<Sector>().GetWater() > 2) p = false;
-        if (listSector[i + 1, j] != null && i < sizeZ - 1) if (listSector[i - 1, j - 1].GetComponent<Sector>().GetWater() > 2) p = false;
-        if (listSector[i + 1, j - 1] != null && i < sizeZ - 1 && j > 0) if (listSector[i - 1, j - 1].GetComponent<Sector>().GetWater() > 2) p = false;
-        if (listSector[i, j - 1] != null && j > 0) if (listSector[i - 1, j - 1].GetComponent<Sector>().GetWater() > 2) p = false;
+        if (i > 0 && j > 0) if (listSector[i - 1, j - 1] != null) if (listSector[i - 1, j - 1].GetComponent<Sector>().GetWater() > 2) p = false;
+        if (i > 0) if (listSector[i - 1, j] != null) if (listSector[i - 1, j].GetComponent<Sector>().GetWater() > 2) p = false;
+        if (i > 0 && j < sizeX - 1) if (listSector[i - 1, j + 1] != null) if (listSector[i - 1, j + 1].GetComponent<Sector>().GetWater() > 2) p = false;
+        if (j < sizeX - 1) if (listSector[i, j + 1] != null) if (listSector[i, j + 1].GetComponent<Sector>().GetWater() > 2) p = false;
+        if (i < sizeZ - 1 && j < sizeX - 1) if (listSector[i + 1, j + 1] != null) if (listSector[i + 1, j + 1].GetComponent<Sector>().GetWater() > 2) p = false;
+        if (i < sizeZ - 1) if (listSector[i + 1, j] != null) if (listSector[i + 1, j].GetComponent<Sector>().GetWater() > 2) p = false;
+        if (i < sizeZ - 1 && j > 0) if (listSector[i + 1, j - 1] != null) if (listSector[i + 1, j - 1].GetComponent<Sector>().GetWater() > 2) p = false;
+        if (j > 0) if (listSector[i, j - 1] != null) if (listSector[i, j - 1].GetComponent<Sector>().GetWater() > 2) p = false;
 
         return p;
     }
