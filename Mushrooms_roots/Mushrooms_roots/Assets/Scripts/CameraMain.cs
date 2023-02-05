@@ -6,8 +6,11 @@ public class CameraMain : MonoBehaviour
 {
     public int minX, minZ, maxX, maxZ;
 
+    public GameObject gameInterface;
+
     private Main _main;
     private GameObject _sector_now;
+    private GameInterface _gameInterface;
 
     public float speed;
 
@@ -15,6 +18,8 @@ public class CameraMain : MonoBehaviour
     void Start()
     {
         _main = GetComponent<Main>();
+        _gameInterface = gameInterface.GetComponent<GameInterface>();
+        _gameInterface.Close();
     }
 
     // Update is called once per frame
@@ -40,9 +45,9 @@ public class CameraMain : MonoBehaviour
         transform.Translate(0, 0, Input.GetAxis("Vertical") * speed);
         transform.position = new Vector3(transform.position.x, pos.y, transform.position.z);
 
-        if (pos.x > maxX || pos.x < minX)
+        if (transform.position.x > maxX || transform.position.x < minX)
             transform.position = new Vector3(pos.x, transform.position.y, transform.position.z);
-        if (pos.z > maxZ || pos.z < minZ)
+        if (transform.position.z > maxZ || transform.position.z < minZ)
             transform.position = new Vector3(transform.position.x, transform.position.y, pos.z);
 
         RaycastHit hit;
@@ -66,13 +71,17 @@ public class CameraMain : MonoBehaviour
             if (sector)
             {
                 if (_sector_now)
+                {
                     _sector_now.GetComponent<Sector>().EndChoose();
+                    _gameInterface.Close();
+                }
                 if (selectedSector == _sector_now)
                 {
                     _sector_now = null;
                 }
                 else
                 {
+                    _gameInterface.Open(sector);
                     sector.Choose();
                     _sector_now = selectedSector;
                 }
