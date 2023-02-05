@@ -10,8 +10,6 @@ public class GameInterface : MonoBehaviour
     Text waterField;
     Text mushroomsField;
     Text speedField;
-    Text requiredEnergyField;
-    Text requiredMushroomsField;
 
     public GameObject[] foodIcons;
     public GameObject[] noFoodIcons;
@@ -35,8 +33,6 @@ public class GameInterface : MonoBehaviour
     int waterAmount;
     int mushroomsNumber;
     int speedMultiplier;
-    int requiredEnergyAmount;
-    int requiredMushroomsNumber;
 
 
     private Main _main;
@@ -45,14 +41,13 @@ public class GameInterface : MonoBehaviour
     void Start()
     {
         speedMultiplier = 1;
+        _main = Camera.main.GetComponent<Main>();
+
         energyField = GameObject.Find("EnergyField").GetComponent<Text>();
         foodField = GameObject.Find("FoodField").GetComponent<Text>();
         waterField = GameObject.Find("WaterField").GetComponent<Text>();
         mushroomsField = GameObject.Find("MushroomsField").GetComponent<Text>();
         speedField = GameObject.Find("SpeedField").GetComponent<Text>();
-        _main = Camera.main.GetComponent<Main>();
-        requiredEnergyField = GameObject.Find("RequiredEnergyField").GetComponent<Text>();
-        requiredMushroomsField = GameObject.Find("RequiredMushroomsField").GetComponent<Text>();
     }
 
     // Update is called once per frame
@@ -63,7 +58,6 @@ public class GameInterface : MonoBehaviour
 
     public void Test()
     {
-        UpdateResourcesInfo(1, 2, 3, 4);
         UpdateSpeedInfo();
         UpdateExtractedResourcesInfo(Random.Range(0, 6), Random.Range(0, 6), Random.Range(0, 6));
 
@@ -75,6 +69,7 @@ public class GameInterface : MonoBehaviour
         ExtraInterface.active = true;
         UpdateExtractedResourcesInfo(sector.GetFood(), sector.GetWater(), sector.GetMushroomsPresent());
     }
+
     public void Close()
     {
         ExtraInterface.active = false;
@@ -112,18 +107,6 @@ public class GameInterface : MonoBehaviour
         }
     }
 
-    public void UpdateResourcesInfo(int energy, int food, int water, int mushrooms)
-    {
-        energyAmount = energy;
-        foodAmount = food;
-        waterAmount = water;
-        mushroomsNumber = mushrooms;
-
-        Debug.Log(energyAmount + " " + foodAmount + " " + waterAmount + " " + mushroomsNumber);
-
-        UpdateResourcesFields();
-    }
-
     public void UpdateSpeedInfo()
     {
         if (speedMultiplier == 1) speedMultiplier = 2;
@@ -131,17 +114,10 @@ public class GameInterface : MonoBehaviour
         else if (speedMultiplier == 4) speedMultiplier = 0;
         else if (speedMultiplier == 0) speedMultiplier = 1;
 
-        Debug.Log(speedMultiplier + "");
-
-        UpdateSpeedField();
+        _main.SetSpeed(speedMultiplier);
+        speedField.text = "x" + speedMultiplier;
     }
-    public void UpdateRequirementInfo(int energy, int mushrooms)
-    {
-        requiredEnergyAmount = energy;
-        requiredMushroomsNumber = mushrooms;
 
-        UpdateRequirementField();
-    }
     public void NoContactZone()
     {
         extraMushroomsIcon.SetActive(false);
@@ -194,17 +170,5 @@ public class GameInterface : MonoBehaviour
         foodField.text = _main.GetFood().ToString() + "|" + _main.GetFoodProduce().ToString() + "x" + _main.GetFoodX().ToString() + "-" + _main.GetFoodCosts().ToString();
         waterField.text = _main.GetWater().ToString() + "|" + _main.GetWaterProduce().ToString() + "x" + _main.GetWaterX().ToString() + "-" + _main.GetWaterCosts().ToString();
         mushroomsField.text = _main.GetMushrooms().ToString() + "/" + _main.GetMushroomsMax().ToString();
-    }
-
-    private void UpdateSpeedField()
-    {
-        _main.SetSpeed(speedMultiplier);
-        speedField.text = "x" + speedMultiplier;
-    }
-
-    private void UpdateRequirementField()
-    {
-        requiredEnergyField.text = requiredEnergyAmount + "x";
-        requiredMushroomsField.text = requiredMushroomsNumber + "x";
     }
 }

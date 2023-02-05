@@ -17,15 +17,15 @@ public class Sector : MonoBehaviour
     public int _time_start;
     public int _time_upgrade;
 
+    private bool _isNear;
     private bool _isUpgrading;
     private long _start_of_upgrading;
-    private float _percent_of_upgrading;
 
     private bool _isChoosed;
     public bool _isColonised;
     private bool _isColonising;
 
-    private long _time_of_colonisation;
+    public long _time_of_colonisation;
     private long _start_of_colonisation;
     private float _percent_of_colonisation;
 
@@ -35,6 +35,16 @@ public class Sector : MonoBehaviour
 
     private Main _main;
     private bool _isSummer;
+
+    public int i, j;
+    public bool IsNear()
+    {
+        return _isNear;
+    }
+    public void SetNear(bool p)
+    {
+        _isNear = p;
+    }
 
     public int GetWater()
     {

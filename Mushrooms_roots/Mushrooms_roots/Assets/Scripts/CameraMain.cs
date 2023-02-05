@@ -81,8 +81,8 @@ public class CameraMain : MonoBehaviour
                 }
                 else
                 {
-                    _gameInterface.Open(sector);
                     sector.Choose();
+                    _gameInterface.Open(sector);
                     _sector_now = selectedSector;
                 }
             }

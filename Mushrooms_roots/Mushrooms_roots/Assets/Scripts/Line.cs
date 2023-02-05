@@ -16,7 +16,6 @@ public class Line : MonoBehaviour
     {
         _position = transform.position;
         transform.position = new Vector3(757, _position.y, _position.z);
-        Debug.Log(_position.x);
         _main = Camera.main.GetComponent<Main>();
         _eventMaker = Camera.main.GetComponent<EventMaker>();
     }
@@ -25,7 +24,6 @@ public class Line : MonoBehaviour
     void Update()
     {
         _position = transform.position;
-        Debug.Log(_position.x);
         var _events = _eventMaker.GetListEvents();
         if (_events.Count > _count)
         {
