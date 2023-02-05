@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class CameraMain : MonoBehaviour
 {
+    public int minX, minZ, maxX, maxZ;
+
     private Main _main;
     private GameObject _sector_now;
 
@@ -30,13 +32,18 @@ public class CameraMain : MonoBehaviour
 
     private void MoveCamera()
     {
-        var y = transform.position.y;
+        var pos = transform.position;
         Ray ray = new Ray(transform.position, transform.forward);
         Debug.DrawRay(ray.origin, ray.direction * 100, Color.yellow);
 
         transform.Translate(Input.GetAxis("Horizontal") * speed, 0, 0);
         transform.Translate(0, 0, Input.GetAxis("Vertical") * speed);
-        transform.position = new Vector3(transform.position.x, y, transform.position.z);
+        transform.position = new Vector3(transform.position.x, pos.y, transform.position.z);
+
+        if (pos.x > maxX || pos.x < minX)
+            transform.position = new Vector3(pos.x, transform.position.y, transform.position.z);
+        if (pos.z > maxZ || pos.z < minZ)
+            transform.position = new Vector3(transform.position.x, transform.position.y, pos.z);
 
         RaycastHit hit;
         if (Physics.Raycast(ray, out hit))
