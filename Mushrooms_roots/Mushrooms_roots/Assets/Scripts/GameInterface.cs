@@ -130,7 +130,7 @@ public class GameInterface : MonoBehaviour
                 closed.active = false;
                 UpdatingZone();
             }
-            if (!sector._isColonised)
+            else if (!sector._isColonised)
             {
                 if (sector.GetEnergyForColonise() > _main.GetEnergy())
                 {

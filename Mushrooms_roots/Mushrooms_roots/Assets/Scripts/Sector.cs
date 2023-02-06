@@ -222,10 +222,10 @@ public class Sector : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (_isColonising) Colonising();
-        if (_isUpgrading) Upgrading();
         if (_isSummer && !_main.isSummer) { _isSummer = false; SetWinter(); }
         if (!_isSummer && _main.isSummer) { _isSummer = true; SetSummer(); }
+        if (_isColonising) Colonising();
+        if (_isUpgrading) Upgrading();
     }
     private void SetWinter()
     {
@@ -241,7 +241,8 @@ public class Sector : MonoBehaviour
 
     private void Colonising()
     {
-        _percent_of_colonisation = (_main.TimeNow() - _start_of_colonisation) / _time_of_colonisation * 100;
+        Debug.Log("Colonising");
+        _percent_of_colonisation = (_main.TimeNow() - _start_of_colonisation) / (_time_of_colonisation * 10000000) * 100;
         if (_percent_of_colonisation >= 100)
         {
             _main.OpenNear(i, j);

@@ -912,7 +912,7 @@ MonoBehaviour:
   _food_produce: 0
   _food_produce_x: 0
   _food_costs: 0
-  _energy: 0
+  _energy: 100
   _energy_produce: 0
   _energy_produce_x: 0
   _energy_costs: 0

@@ -224,13 +224,6 @@ public class Main : MonoBehaviour
 
     public void OpenNear(int i, int j)
     {
-        for (int n = 0; i < 7; i++)
-        {
-            var s = "";
-            for (int m = 0; j < 7; j++)
-                s = s + listSector[n, m].GetComponent<Sector>().i + " " + listSector[n, m].GetComponent<Sector>().j + "; ";
-            Debug.Log(s);
-        }
         if (i > 0 && j > 0) if (listSector[i - 1, j - 1] != null) listSector[i - 1, j - 1].GetComponent<Sector>().SetNear(true);
         if (i > 0) if (listSector[i - 1, j] != null) listSector[i - 1, j].GetComponent<Sector>().SetNear(true);
         if (i > 0 && j < sizeX - 1) if (listSector[i - 1, j + 1] != null) listSector[i - 1, j + 1].GetComponent<Sector>().SetNear(true);
@@ -272,14 +265,6 @@ public class Main : MonoBehaviour
             UpdateTicks();
             Mathemetic();
             CheckEnd();
-        }
-    }
-
-    private void ChangeWeather()
-    {
-        if (_lastIsSummer != isSummer)
-        {
-
         }
     }
 
@@ -458,6 +443,7 @@ public class Main : MonoBehaviour
         listSector[centalZ - 1, centalX].GetComponent<Sector>().SetNear(true);
         listSector[centalZ, centalX - 1].GetComponent<Sector>().SetNear(true);
         listSector[centalZ, centalX + 1].GetComponent<Sector>().SetNear(true);
+        Debug.Log(listSector);
     }
     private bool isNearWater(int i, int j)
     {
