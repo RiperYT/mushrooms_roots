@@ -42,7 +42,7 @@ public class Main : MonoBehaviour
     public int _dopEnergyCost;
 
     public int sizeX, sizeZ;
-    private GameObject[,] listSector;
+    public GameObject[,] listSector;
 
     public List<GameObject> green;
     public List<GameObject> blue;
@@ -222,6 +222,25 @@ public class Main : MonoBehaviour
         return timeS;
     }
 
+    public void OpenNear(int i, int j)
+    {
+        for (int n = 0; i < 7; i++)
+        {
+            var s = "";
+            for (int m = 0; j < 7; j++)
+                s = s + listSector[n, m].GetComponent<Sector>().i + " " + listSector[n, m].GetComponent<Sector>().j + "; ";
+            Debug.Log(s);
+        }
+        if (i > 0 && j > 0) if (listSector[i - 1, j - 1] != null) listSector[i - 1, j - 1].GetComponent<Sector>().SetNear(true);
+        if (i > 0) if (listSector[i - 1, j] != null) listSector[i - 1, j].GetComponent<Sector>().SetNear(true);
+        if (i > 0 && j < sizeX - 1) if (listSector[i - 1, j + 1] != null) listSector[i - 1, j + 1].GetComponent<Sector>().SetNear(true);
+        if (j < sizeX - 1) if (listSector[i, j + 1] != null) listSector[i, j + 1].GetComponent<Sector>().SetNear(true);
+        if (i < sizeZ - 1 && j < sizeX - 1) if (listSector[i + 1, j + 1] != null) listSector[i + 1, j + 1].GetComponent<Sector>().SetNear(true);
+        if (i < sizeZ - 1) if (listSector[i + 1, j] != null) listSector[i + 1, j].GetComponent<Sector>().SetNear(true);
+        if (i < sizeZ - 1 && j > 0) if (listSector[i + 1, j - 1] != null) listSector[i + 1, j - 1].GetComponent<Sector>().SetNear(true);
+        if (j > 0) if (listSector[i, j - 1] != null) listSector[i, j - 1].GetComponent<Sector>().SetNear(true);
+    }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -236,7 +255,7 @@ public class Main : MonoBehaviour
         listSector = new GameObject[sizeZ,sizeX];
         CreateWorld();
 
-        Camera.main.transform.position = new Vector3((sizeX - 1) * 6.4f / 2, 8.1f, (-sizeZ - 1) * 6.4f/ 2);
+        Camera.main.transform.position = new Vector3((sizeX - 1) * 6.4f / 2, 10f, (-sizeZ - 1) * 6.4f/ 2);
         var camera = Camera.main.GetComponent<CameraMain>();
         camera.minX = -5;
         camera.maxZ = 5;
@@ -276,17 +295,26 @@ public class Main : MonoBehaviour
     {
         if (_ticks_from_update >= timeS * 10000000)
         {
+            var water = _water;
+            var food = _food;
+            var energy = _energy;
             _water = _water + _water_produce * _water_produce_x - _water_costs + waterCost * _mushrooms;
             _food = _food + _food_produce * _food_produce_x - _food_costs + foodCost * _mushrooms;
             _energy = _energy + _energy_produce * _energy_produce_x - _energy_costs + energyCost * _mushrooms;
+            if (_water < 0 || _food < 0)
+            {
+                _water = water;
+                _food = food;
+                _energy = energy - _mushrooms + energyCost * _mushrooms;
+            }
             _ticks_from_update = 0;
         }
     }
 
     private void CheckEnd()
     {
-        if (_energy < 0)
-            Debug.Log("End");
+        if (_energy < 0) { }
+            //Debug.Log("End");
     }
 
     private void CreateWorld()
@@ -304,6 +332,8 @@ public class Main : MonoBehaviour
                     {
                         listSector[i, j] = Instantiate(green[random.Next(0, green.Count)], new Vector3(6.4f * j, 0, -6.4f * i), new Quaternion(0,0,0,0)) as GameObject;
                         var sec = listSector[i, j].GetComponent<Sector>();
+                        sec.i = i;
+                        sec.j = j;
                         sec._water = random.Next(1, 3);
                         sec._food = random.Next(3, 5);
                         sec._mushrooms_present = random.Next(1, 3);
@@ -312,18 +342,20 @@ public class Main : MonoBehaviour
                         sec._isColonised = false;
                         sec.SetNear(false);
 
-                        sec._time_of_colonisation = (int)Math.Round(Math.Sqrt(Math.Abs(centalZ - i) ^ 2 + Math.Abs(centalX - j) ^ 2)) * 10;
-                        sec._energy_for_colonise = (int) Math.Round(Math.Sqrt(Math.Abs(centalZ - i) ^ 2 + Math.Abs(centalX - j) ^ 2)) * 10;
+                        sec._time_of_colonisation = Math.Max(i,j) * 10;
+                        sec._energy_for_colonise = Math.Max(Math.Abs(i-centalZ), Math.Abs(j - centalX)) * 10;
 
-                        sec._energy_start = (int)Math.Round(Math.Sqrt(Math.Abs(centalZ - i) ^ 2 + Math.Abs(centalX - j) ^ 2)) * 5;
+                        sec._energy_start = Math.Max(Math.Abs(i-centalZ), Math.Abs(j - centalX)) * 5;
                         sec._energy_upgrade = 5;
-                        sec._time_start = (int)Math.Round(Math.Sqrt(Math.Abs(centalZ - i) ^ 2 + Math.Abs(centalX - j) ^ 2)) * 5;
+                        sec._time_start = Math.Max(Math.Abs(i-centalZ), Math.Abs(j - centalX)) * 5;
                         sec._time_upgrade = 5;
                     }
                     else
                     {
                         listSector[i, j] = Instantiate(blue[random.Next(0, blue.Count)], new Vector3(6.4f * j, 0, -6.4f * i), Quaternion.identity) as GameObject;
                         var sec = listSector[i, j].GetComponent<Sector>();
+                        sec.i = i;
+                        sec.j = j;
                         sec._water = random.Next(3, 5);
                         sec._food = random.Next(1, 3);
                         sec._mushrooms_present = random.Next(1, 3);
@@ -332,12 +364,12 @@ public class Main : MonoBehaviour
                         sec._isColonised = false;
                         sec.SetNear(false);
 
-                        sec._time_of_colonisation = (int)Math.Round(Math.Sqrt(Math.Abs(centalZ - i) ^ 2 + Math.Abs(centalX - j) ^ 2)) * 10;
-                        sec._energy_for_colonise = (int)Math.Round(Math.Sqrt(Math.Abs(centalZ - i) ^ 2 + Math.Abs(centalX - j) ^ 2)) * 10;
+                        sec._time_of_colonisation = Math.Max(Math.Abs(i-centalZ), Math.Abs(j - centalX)) * 10;
+                        sec._energy_for_colonise = Math.Max(Math.Abs(i-centalZ), Math.Abs(j - centalX)) * 10;
 
-                        sec._energy_start = (int)Math.Round(Math.Sqrt(Math.Abs(centalZ - i) ^ 2 + Math.Abs(centalX - j) ^ 2)) * 5;
+                        sec._energy_start = Math.Max(Math.Abs(i-centalZ), Math.Abs(j - centalX)) * 5;
                         sec._energy_upgrade = 5;
-                        sec._time_start = (int)Math.Round(Math.Sqrt(Math.Abs(centalZ - i) ^ 2 + Math.Abs(centalX - j) ^ 2)) * 5;
+                        sec._time_start = Math.Max(Math.Abs(i-centalZ), Math.Abs(j - centalX)) * 5;
                         sec._time_upgrade = 5;
 
                         if (i + 1 < sizeZ)
@@ -345,6 +377,8 @@ public class Main : MonoBehaviour
                             listSector[i + 1, j] = Instantiate(blue[random.Next(0, blue.Count)], new Vector3(6.4f * j, 0, -6.4f * (i + 1)), Quaternion.identity) as GameObject;
                             listSector[i + 1, j].transform.RotateAround(listSector[i + 1, j].transform.position, Vector3.up, -90); ;
                             var sec1 = listSector[i + 1, j].GetComponent<Sector>();
+                            sec1.i = i + 1;
+                            sec1.j = j;
                             sec1._water = random.Next(3, 5);
                             sec1._food = random.Next(1, 3);
                             sec1._mushrooms_present = random.Next(1, 3);
@@ -353,12 +387,12 @@ public class Main : MonoBehaviour
                             sec1._isColonised = false;
                             sec1.SetNear(false);
                                
-                            sec1._time_of_colonisation = (int)Math.Round(Math.Sqrt(Math.Abs(centalZ - i) ^ 2 + Math.Abs(centalX - j) ^ 2)) * 10;
-                            sec1._energy_for_colonise = (int)Math.Round(Math.Sqrt(Math.Abs(centalZ - i) ^ 2 + Math.Abs(centalX - j) ^ 2)) * 10;
+                            sec1._time_of_colonisation = Math.Max(Math.Abs((i + 1) - centalZ), Math.Abs(j - centalX)) * 10;
+                            sec1._energy_for_colonise = Math.Max(Math.Abs((i + 1) - centalZ), Math.Abs(j - centalX)) * 10;
                                
-                            sec1._energy_start = (int)Math.Round(Math.Sqrt(Math.Abs(centalZ - i) ^ 2 + Math.Abs(centalX - j) ^ 2)) * 5;
+                            sec1._energy_start = Math.Max(Math.Abs((i+1)-centalZ), Math.Abs(j - centalX)) * 5;
                             sec1._energy_upgrade = 5;
-                            sec1._time_start = (int)Math.Round(Math.Sqrt(Math.Abs(centalZ - i) ^ 2 + Math.Abs(centalX - j) ^ 2)) * 5;
+                            sec1._time_start = Math.Max(Math.Abs((i + 1) - centalZ), Math.Abs(j - centalX)) * 5;
                             sec1._time_upgrade = 5;
                         }
                         if (j + 1 < sizeX)
@@ -366,6 +400,8 @@ public class Main : MonoBehaviour
                             listSector[i, j + 1] = Instantiate(blue[random.Next(0, blue.Count)], new Vector3(6.4f * (j + 1), 0, -6.4f * i), Quaternion.identity) as GameObject;
                             listSector[i, j + 1].transform.RotateAround(listSector[i, j + 1].transform.position, Vector3.up, 90);
                             var sec1 = listSector[i, j + 1].GetComponent<Sector>();
+                            sec1.i = i;
+                            sec1.j = j + 1;
                             sec1._water = random.Next(3, 5);
                             sec1._food = random.Next(1, 3);
                             sec1._mushrooms_present = random.Next(1, 3);
@@ -374,12 +410,12 @@ public class Main : MonoBehaviour
                             sec1._isColonised = false;
                             sec1.SetNear(false);
 
-                            sec1._time_of_colonisation = (int)Math.Round(Math.Sqrt(Math.Abs(centalZ - i) ^ 2 + Math.Abs(centalX - j) ^ 2)) * 10;
-                            sec1._energy_for_colonise = (int)Math.Round(Math.Sqrt(Math.Abs(centalZ - i) ^ 2 + Math.Abs(centalX - j) ^ 2)) * 10;
+                            sec1._time_of_colonisation = Math.Max(Math.Abs((j + 1) - centalZ), Math.Abs((j + 1) - centalX)) * 10;
+                            sec1._energy_for_colonise = Math.Max(Math.Abs((j + 1) - centalZ), Math.Abs((j + 1) - centalX)) * 10;
 
-                            sec1._energy_start = (int)Math.Round(Math.Sqrt(Math.Abs(centalZ - i) ^ 2 + Math.Abs(centalX - j) ^ 2)) * 5;
+                            sec1._energy_start = Math.Max(Math.Abs((j + 1) - centalZ), Math.Abs((j + 1) - centalX)) * 5;
                             sec1._energy_upgrade = 5;
-                            sec1._time_start = (int)Math.Round(Math.Sqrt(Math.Abs(centalZ - i) ^ 2 + Math.Abs(centalX - j) ^ 2)) * 5;
+                            sec1._time_start = Math.Max(Math.Abs((j + 1) - centalZ), Math.Abs((j + 1) - centalX)) * 5;
                             sec1._time_upgrade = 5;
                         }
                         if (j + 1 < sizeX && i + 1 < sizeZ)
@@ -387,6 +423,8 @@ public class Main : MonoBehaviour
                             listSector[i + 1, j + 1] = Instantiate(blue[random.Next(0, blue.Count)], new Vector3(6.4f * (j + 1), 0, -6.4f * (i + 1)), Quaternion.identity) as GameObject;
                             listSector[i + 1, j + 1].transform.RotateAround(listSector[i + 1, j + 1].transform.position, Vector3.up, -180); ;
                             var sec1 = listSector[i + 1, j + 1].GetComponent<Sector>();
+                            sec1.i = i + 1;
+                            sec1.j = j + 1;
                             sec1._water = random.Next(3, 5);
                             sec1._food = random.Next(1, 3);
                             sec1._mushrooms_present = random.Next(1, 3);
@@ -395,18 +433,22 @@ public class Main : MonoBehaviour
                             sec1._isColonised = false;
                             sec1.SetNear(false);
 
-                            sec1._time_of_colonisation = (int)Math.Round(Math.Sqrt(Math.Abs(centalZ - i) ^ 2 + Math.Abs(centalX - j) ^ 2)) * 10;
-                            sec1._energy_for_colonise = (int)Math.Round(Math.Sqrt(Math.Abs(centalZ - i) ^ 2 + Math.Abs(centalX - j) ^ 2)) * 10;
+                            sec1._time_of_colonisation = Math.Max(Math.Abs((i + 1) - centalZ), Math.Abs((j + 1) - centalX)) * 10;
+                            sec1._energy_for_colonise = Math.Max(Math.Abs((i + 1) - centalZ), Math.Abs((j + 1) - centalX)) * 10;
 
-                            sec1._energy_start = (int)Math.Round(Math.Sqrt(Math.Abs(centalZ - i) ^ 2 + Math.Abs(centalX - j) ^ 2)) * 5;
+                            sec1._energy_start = Math.Max(Math.Abs((i + 1) - centalZ), Math.Abs((j + 1) - centalX)) * 5;
                             sec1._energy_upgrade = 5;
-                            sec1._time_start = (int)Math.Round(Math.Sqrt(Math.Abs(centalZ - i) ^ 2 + Math.Abs(centalX - j) ^ 2)) * 5;
+                            sec1._time_start = Math.Max(Math.Abs((i + 1) - centalZ), Math.Abs((j + 1) - centalX)) * 5;
                             sec1._time_upgrade = 5;
                         }
                     }
                 }
 
         listSector[centalZ, centalX].GetComponent<Sector>()._isColonised = true;
+        listSector[centalZ, centalX].GetComponent<Sector>()._energy_start = 5;
+        listSector[centalZ, centalX].GetComponent<Sector>()._time_start = 5;
+        listSector[centalZ, centalX].GetComponent<Sector>()._energy_upgrade = 2;
+        listSector[centalZ, centalX].GetComponent<Sector>()._time_upgrade = 2;
         listSector[centalZ, centalX].GetComponent<Sector>().SetNear(true);
         listSector[centalZ+1, centalX+1].GetComponent<Sector>().SetNear(true);
         listSector[centalZ+1, centalX-1].GetComponent<Sector>().SetNear(true);
@@ -415,7 +457,7 @@ public class Main : MonoBehaviour
         listSector[centalZ + 1, centalX].GetComponent<Sector>().SetNear(true);
         listSector[centalZ - 1, centalX].GetComponent<Sector>().SetNear(true);
         listSector[centalZ, centalX - 1].GetComponent<Sector>().SetNear(true);
-        listSector[centalZ, centalX - 1].GetComponent<Sector>().SetNear(true);
+        listSector[centalZ, centalX + 1].GetComponent<Sector>().SetNear(true);
     }
     private bool isNearWater(int i, int j)
     {

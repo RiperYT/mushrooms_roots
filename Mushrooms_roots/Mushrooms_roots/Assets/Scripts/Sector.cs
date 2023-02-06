@@ -18,14 +18,14 @@ public class Sector : MonoBehaviour
     public int _time_upgrade;
 
     private bool _isNear;
-    private bool _isUpgrading;
+    public bool _isUpgrading;
     private long _start_of_upgrading;
 
     private bool _isChoosed;
     public bool _isColonised;
-    private bool _isColonising;
+    public bool _isColonising;
 
-    public long _time_of_colonisation;
+    public int _time_of_colonisation;
     private long _start_of_colonisation;
     private float _percent_of_colonisation;
 
@@ -82,6 +82,17 @@ public class Sector : MonoBehaviour
             throw new Exception("Cannot be more mushrooms in sector");
         }
     }
+    public int GetEnergyUpgrade()
+    {
+        if (_mushrooms_present < _mushrooms_max)
+        {
+            return _energy_start + _energy_upgrade * (_mushrooms_present - 1);
+        }
+        else
+        {
+            throw new Exception("Cannot be more mushrooms in sector");
+        }
+    }
 
     public int GetTimeToEndUpgrade()
     {
@@ -99,12 +110,17 @@ public class Sector : MonoBehaviour
     {
         return _isUpgrading;
     }
+    public bool IsColonising()
+    {
+        return _isColonising;
+    }
 
     public void StartUpgrading()
     {
-        if (_main.GetEnergy() >= _energy_upgrade)
+        Debug.Log("Sector");
+        if (_main.GetEnergy() >= _energy_start + _energy_upgrade * (_mushrooms_present - 1) && !_isUpgrading && _mushrooms_max > _mushrooms_present)
         {
-            _main.AddEnergy(-_energy_upgrade);
+            _main.AddEnergy(-_energy_start + _energy_upgrade * (_mushrooms_present - 1));
             _isUpgrading = true;
             _start_of_upgrading = _main.TimeNow();
         }
@@ -133,9 +149,14 @@ public class Sector : MonoBehaviour
 
     }
 
+    public int GetTimeToColonise()
+    {
+        return _time_of_colonisation;
+    }
+
     public void StartColonisatining()
     {
-        if (!_isColonised && _main.GetEnergy() >= _energy_for_colonise)
+        if (!_isColonised && _main.GetEnergy() >= _energy_for_colonise && !_isColonising)
         {
             _main.AddEnergy(-_energy_for_colonise);
             _isColonising = true;
@@ -172,7 +193,7 @@ public class Sector : MonoBehaviour
 
         if (_isColonised)
         {
-            for(int i = 0; i < _mushrooms_present; i++)
+            for(int n = 0; n < _mushrooms_present; n++)
             {
                 var p = true;
                 while (p)
@@ -223,6 +244,8 @@ public class Sector : MonoBehaviour
         _percent_of_colonisation = (_main.TimeNow() - _start_of_colonisation) / _time_of_colonisation * 100;
         if (_percent_of_colonisation >= 100)
         {
+            _main.OpenNear(i, j);
+
             _isColonised = true;
             _isColonising = false;
             _main.AddMushrooms(_mushrooms_present);
@@ -236,7 +259,7 @@ public class Sector : MonoBehaviour
             _main.AddFoodProduce(_mushrooms_present * _food);
             _main.AddWaterProduce(_mushrooms_present * _water);
 
-            for (int i = 0; i < _mushrooms_present; i++)
+            for (int n = 0; n < _mushrooms_present; n++)
             {
                 var p = true;
                 while (p)

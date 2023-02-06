@@ -21,6 +21,8 @@ public class GameInterface : MonoBehaviour
     public GameObject requiredEnergyIcon;
     public GameObject extraMushroomsIcon;
 
+    public GameObject closed;
+
     public Text interactionField1;
     public Text interactionField2;
     public Text interactionField3;
@@ -36,10 +38,14 @@ public class GameInterface : MonoBehaviour
 
 
     private Main _main;
+    private Sector _sectorOpen;
+    private bool _isOpened;
 
     // Start is called before the first frame update
     void Start()
     {
+        closed.active = false;
+        _isOpened = false;
         speedMultiplier = 1;
         _main = Camera.main.GetComponent<Main>();
 
@@ -54,6 +60,7 @@ public class GameInterface : MonoBehaviour
     void Update()
     {
         UpdateResourcesFields();
+        if(_isOpened) Open(_sectorOpen);
     }
 
     public void Test()
@@ -64,14 +71,108 @@ public class GameInterface : MonoBehaviour
         UpgradeTheZone(123, 345, 1);
     }
 
+    public void Click()
+    {
+        Debug.Log("Click");
+        if (_isOpened)
+            if (!_sectorOpen.IsUpgrading())
+            {
+                if (!_sectorOpen.IsColonising())
+                {
+                    if (_sectorOpen.IsNear())
+                    {
+                        if (!_sectorOpen._isColonised)
+                        {
+                            if (_main.GetEnergy() > _sectorOpen.GetEnergyForColonise())
+                            {
+                                _sectorOpen.StartColonisatining();
+                            }
+                        }
+                        else
+                        {
+                            if (_sectorOpen.GetMushroomsPresent() < _sectorOpen.GetMushroomsMax())
+                            {
+                                if (_main.GetEnergy() > _sectorOpen.GetEnergyUpgrade())
+                                {
+                                    _sectorOpen.StartUpgrading();
+                                    Debug.Log("Upgrade");
+                                }
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    //ToDo
+                }
+            }
+            else
+            {
+                //ToDo
+            }
+    }
+
     public void Open(Sector sector)
     {
+        _isOpened = true;
+        _sectorOpen = sector;
         ExtraInterface.active = true;
         UpdateExtractedResourcesInfo(sector.GetFood(), sector.GetWater(), sector.GetMushroomsPresent());
+        if (sector.IsNear())
+        {
+            if (sector.IsColonising())
+            {
+                closed.active = false;
+                ColonisingZone();
+            }
+            else if (sector.IsUpgrading())
+            {
+                closed.active = false;
+                UpdatingZone();
+            }
+            if (!sector._isColonised)
+            {
+                if (sector.GetEnergyForColonise() > _main.GetEnergy())
+                {
+                    closed.active = true;
+                }
+                else
+                {
+                    closed.active = false;
+                }
+                GetTheZone(sector.GetEnergyForColonise(), sector.GetTimeToColonise());
+            }
+            else
+            {
+                if (sector.GetMushroomsPresent() == sector.GetMushroomsMax())
+                {
+                    MaxLimitOfTheZone();
+                    closed.active = false;
+                }
+                else
+                {
+                    if (sector.GetEnergyUpgrade() > _main.GetEnergy())
+                    {
+                        closed.active = true;
+                    }
+                    else
+                    {
+                        closed.active = false;
+                    }
+                    UpgradeTheZone(sector.GetEnergyUpgrade(), sector.GetTimeUpgrade(), 1);
+                }
+            }
+        }
+        else
+        {
+            NoContactZone();
+            closed.active = false;
+        }
     }
 
     public void Close()
     {
+        _isOpened = false;
         ExtraInterface.active = false;
     }
 
@@ -118,6 +219,28 @@ public class GameInterface : MonoBehaviour
         speedField.text = "x" + speedMultiplier;
     }
 
+    public void ColonisingZone()
+    {
+        extraMushroomsIcon.SetActive(false);
+        requiredEnergyIcon.SetActive(false);
+
+        interactionField1.text = "Left";
+        interactionField2.text = _sectorOpen.GetTimeToEndColonise().ToString() + " s";
+        interactionField3.text = "to open";
+        interactionField4.text = "the zone";
+    }
+
+    public void UpdatingZone()
+    {
+        extraMushroomsIcon.SetActive(false);
+        requiredEnergyIcon.SetActive(false);
+
+        interactionField1.text = "Left";
+        interactionField2.text = _sectorOpen.GetTimeToEndUpgrade().ToString() + " s";
+        interactionField3.text = "to end";
+        interactionField4.text = "upgrading";
+    }
+
     public void NoContactZone()
     {
         extraMushroomsIcon.SetActive(false);
@@ -135,7 +258,7 @@ public class GameInterface : MonoBehaviour
         requiredEnergyIcon.SetActive(true);
 
         interactionField1.text = energy + "";
-        interactionField2.text = seconds + "sec";
+        interactionField2.text = seconds + " s";
         interactionField3.text = "to open";
         interactionField4.text = "the zone";
     }
@@ -146,7 +269,7 @@ public class GameInterface : MonoBehaviour
         requiredEnergyIcon.SetActive(true);
 
         interactionField1.text = energy + "";
-        interactionField2.text = seconds + "sec";
+        interactionField2.text = seconds + " s";
         interactionField3.text = "to grow";
         interactionField4.text = extraMushrooms + "";
     }
@@ -155,8 +278,6 @@ public class GameInterface : MonoBehaviour
     {
         extraMushroomsIcon.SetActive(false);
         requiredEnergyIcon.SetActive(false);
-
-        Debug.Log(interactionField1 + " " + interactionField2 + " " + interactionField3 + " " + interactionField4);
 
         interactionField1.text = "You have";
         interactionField2.text = "reached";
